@@ -3,6 +3,8 @@
 Convert between json, scss, and plain javascript objects. Forks the `parseJson` function from [node-sass-import-once](https://github.com/at-import/node-sass-import-once).
 If `options.unquoteColors` is set to true, the color values in the sass variable will be unquoted so they can be used properly in your stylesheets.
 
+**Caution**: this module has not been properly tested yet. Use at your own risks.
+
 ## Features
 
 - parses Yaml buffers/strings
