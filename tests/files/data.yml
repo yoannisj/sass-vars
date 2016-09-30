@@ -1,0 +1,4 @@
+path: tests/files/data.yml
+extname: .yml
+basename: data.yml
+name: data.yml
