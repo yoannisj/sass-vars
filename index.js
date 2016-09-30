@@ -14,11 +14,14 @@ var yaml = require('js-yaml');
 // - unquoteLengths: {bool:true|false} [true]
 
 var defaults = {
-  encodig: 'utf8',
-  format: 'scss',
+  // format: 'scss',
+  // name: undefined,
   default: false,
+  // type: undefined,
+  isFile: false,
+  encodig: 'utf8',
   unquoteColors: true,
-  unquoteLengths: true
+  // unquoteLengths: true
 };
 
 var sassVars = module.exports = function(data, options) {
