@@ -1,0 +1,6 @@
+{
+  "path": "tests/files/data.json",
+  "extname": ".json",
+  "basename": "data.json",
+  "name": "data"
+}
