@@ -1,0 +1,10 @@
+color-a: rgba(125, 232, 80, 0.5)
+color-b: rgb(214, 176, 200)
+color-c: hsl(203, 78, 25)
+color-d: hsla(203, 78, 25, 0.1)
+color-e: red
+color-f: antiquewhite
+color-g: #f5f5f5
+color-h: '#323534'
+color-i: \#ff4ac2
+color-j: '#fff'

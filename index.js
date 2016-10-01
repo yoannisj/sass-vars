@@ -21,7 +21,7 @@ var defaults = {
   isFile: false,
   encodig: 'utf8',
   unquoteColors: true,
-  // unquoteLengths: true
+  unquoteNumbers: true
 };
 
 var sassVars = module.exports = function(data, options) {
@@ -111,9 +111,8 @@ sassVars.parseJson = function(data, options) {
   // complete sass variable declaration
   res += options.default ? ' !default;' : ';';
 
-  if (options.unquoteColors) {
-    res = sassVars.unquoteColors(res);
-  }
+  if (options.unquoteColors) res = sassVars.unquoteColors(res);
+  if (options.unquoteNumbers) res = sassVars.unquoteNumbers(res);
 
   return res;
 };
@@ -123,45 +122,74 @@ var cssColors = require('css-color-names');
 var colorNamesRe = '"(' + Object.keys(cssColors).join('|') + ')"';
 colorNamesRe = new RegExp(colorNamesRe, 'g');
 
-sassVars.unquoteColors = function(val) {
-  var colors;
-  
-  // Css color names
-  // val = val.replace(cssColorNames, function(color) {
-  //   return cssColors[color];
-  // });
+// unquote css color values in a string,
+// so they can be used properly in sass
+sassVars.unquoteColors = function(str) {
+  var colors = [];
 
-  // Hex colors
-  colors = val.match(/"(#([0-9a-f]{3}){1,2})"/g);
-  if (colors) {
-    colors.forEach(function (color) {
-      val = val.replace(color, color.slice(1, -1));
-    });
-  }
+  // find color values in json
+  var colors = []
+    // Hex color codes
+    .concat(str.match(/"(#([0-9a-f]{3}){1,2})"/g) || [])
+    // rgb(a) & hsl(a) colors
+    .concat(str.match(/"(rgb|rgba|hsl|hsla)\((\d{1,3}), (\d{1,3}), (\d{1,3})(, 0?\.?\d+)?\)"/g) || [])
+    // css color names
+    .concat(str.match(colorNamesRe) || []);
 
-  // RGB/A Colors
-  colors = val.match(/"(rgb|rgba)\((\d{1,3}), (\d{1,3}), (\d{1,3})\)"/g);
-  if (colors) {
-    colors.forEach(function (color) {
-      val = val.replace(color, color.slice(1, -1));
-    });
-  }
-
-  // HSL/A Colors
-  colors = val.match(/"(hsl|hsla)\((\d{1,3}), (\d{1,3}), (\d{1,3})\)"/g);
-  if (colors) {
-    colors.forEach(function (color) {
-      val = val.replace(color, color.slice(1, -1));
-    });
-  }
-
-  // Css color names
-  colors = val.match(colorNamesRe);
-  if (colors) {
+  if (colors.length) {
     colors.forEach(function(color) {
-      val = val.replace(color, color.slice(1, -1));
+      str = str.replace(color, color.slice(1, -1));
     });
   }
 
-  return val;
+  return str;
 };
+
+// numbers
+var units = require('./css-units');
+var lengthRe = new RegExp('"[0-9\.]+(' + units['length'].join('|') + ')"', 'g');
+var angleRe = new RegExp('"[0-9\.]+(' + units['angle'].join('|') + ')"', 'g');
+var timeRe = new RegExp('"[0-9\.]+(' + units['time'].join('|') + ')"', 'g');
+
+// unquotes css lengths
+sassVars.unquoteNumbers = function(str) {
+  // find numbers in the json string
+  var numbers = []
+    .concat(str.match(lengthRe) || [])
+    .concat(str.match(angleRe) || [])
+    .concat(str.match(timeRe) || []);
+
+  // unquote all numbers found
+  if (numbers.length) {
+    numbers.forEach(function(number) {
+      str = str.replace(number, number.slice(1, -1));
+    });
+  }
+
+  return str;
+};
+
+// removes unit from px lengths in a string, so they can be used
+// as numbers in javascript (after `JSON.parse`)
+sassVars.floatPixels = function(str) {
+  // remove quoted px lengths
+  var quotedPx = str.match(/"[0-9\.]+px"/g);
+  if (quotedPx) {
+    quotedPx.forEach(function(length) {
+      str = str.replace(length, length.slice(1, -3));
+    });
+  }
+
+  // remove plain px lengths
+  var plainPx = str.match(/[0-9\.]+px/g);
+  if (plainPx) {
+    plainPx.forEach(function(length) {
+      str = str.replace(length, length.slice(0, -2));
+    });
+  }
+
+  return str;
+};
+
+
+
