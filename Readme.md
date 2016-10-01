@@ -11,11 +11,12 @@ If `options.unquoteColors` is set to true, the color values in the sass variable
 - parses JSON buffers/strings
 - parses plain javascript literals and hashes
 - unquote color values (hex, rgb, rgba, hsl, hsla, named CSS colors)
+- unquote length values (%, em, ex, ch, em, vh, vw, in, ax, px,  q, mm, cm, in, pt, pc)
+- unquote angle values (deg, grad, rad, turn)
+- unquote time values (s, ms)
 
 ### Coming Soon
 
-- unquote length values (px, em, rem, mm, cm, ...)
-- unquote time values (ms, s)
 - read files asyncrhoneously (returns a promise)
 
 ### Under Consideration
@@ -67,3 +68,5 @@ if `options.unquoteLengths` is set to true, the color values in the sass variabl
 - `encoding`: (string) what encoding to use to read file's content. Defaults to 'utf8'.
 
 - `unquoteColors` (bool) whether to unquote color values in the sass variable declaration. Defaults to `true`.
+
+- `unquoteNumbers` (bool) whether to unquote number values (length, angle & time) in the sass variable declaration. Deaults to `true`.
