@@ -190,6 +190,3 @@ sassVars.floatPixels = function(str) {
 
   return str;
 };
-
-
-
